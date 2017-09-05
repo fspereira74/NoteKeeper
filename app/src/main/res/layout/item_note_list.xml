@@ -28,7 +28,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_assignment_black_24dp"
-                tools:layout_editor_absoluteX="0dp" />
+                app:layout_constraintVertical_bias="0.5"
+                android:layout_marginLeft="8dp"
+                app:layout_constraintLeft_toLeftOf="parent" />
 
             <TextView
                 android:id="@+id/text_course"
