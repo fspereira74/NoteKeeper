@@ -28,8 +28,6 @@ public final class NoteInfo implements Parcelable {
 
     public int getId() { return mId; }
 
-    public void setId(int id) { this.mId = id; }
-
     public CourseInfo getCourse() {
         return mCourse;
     }
