@@ -33,6 +33,7 @@ public class DatabaseDataWorker {
 
         insertNote("java_core", "Compiler options", "The -jar option isn't compatible with with the -cp option");
         insertNote("java_core", "Serialization", "Remember to include SerialVersionUID to assure version compatibility");
+        insertNote("java_core", "ElasticSearch", "Elasticsearch - You Know for search");
     }
 
     private void insertCourse(String courseId, String title) {

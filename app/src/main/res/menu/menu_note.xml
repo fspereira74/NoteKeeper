@@ -13,7 +13,8 @@
         android:icon="@android:drawable/ic_media_next"
         android:orderInCategory="101"
         android:title="Next"
-        app:showAsAction="ifRoom|withText"/>
+        android:visible="false"
+        app:showAsAction="ifRoom|withText" />
     <item
         android:id="@+id/action_send_mail"
         android:orderInCategory="102"

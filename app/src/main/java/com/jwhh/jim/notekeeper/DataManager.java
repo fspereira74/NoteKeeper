@@ -1,7 +1,13 @@
 package com.jwhh.jim.notekeeper;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jwhh.jim.notekeeper.NoteKeeperDatabaseContract.*;
 
 /**
  * Created by Jim.
@@ -17,9 +23,69 @@ public class DataManager {
         if(ourInstance == null) {
             ourInstance = new DataManager();
             ourInstance.initializeCourses();
-            ourInstance.initializeExampleNotes();
+//            ourInstance.initializeExampleNotes();
         }
         return ourInstance;
+    }
+
+    public static void loadFromDatabase(NoteKeeperOpenHelper dbHelper) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        final String[] courseColumns = {
+                CourseInfoEntry.COLUMN_COURSE_ID,
+                CourseInfoEntry.COLUMN_COURSE_TITLE };
+        final Cursor courseCursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns,
+                null, null, null, null, CourseInfoEntry.COLUMN_COURSE_TITLE);
+        loadCoursesFromDatabase(courseCursor);
+
+        final String[] noteColumns = {
+                NoteInfoEntry.COLUMN_NOTE_TITLE,
+                NoteInfoEntry.COLUMN_NOTE_TEXT,
+                NoteInfoEntry.COLUMN_COURSE_ID,
+                NoteInfoEntry._ID};
+        String noteOrderBy = NoteInfoEntry.COLUMN_COURSE_ID + "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
+        final Cursor notesCursor = db.query(NoteInfoEntry.TABLE_NAME, noteColumns,
+                null, null, null, null, noteOrderBy);
+        loadNotesFromDatabase(notesCursor);
+
+    }
+
+    private static void loadNotesFromDatabase(Cursor cursor) {
+        int noteTitlePos = cursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
+        int noteTextPos = cursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
+        int courseIdPos = cursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
+        int idPos = cursor.getColumnIndex(NoteInfoEntry._ID);
+
+        DataManager dm = getInstance();
+        dm.mNotes.clear();
+
+        while(cursor.moveToNext()) {
+            String noteTitle = cursor.getString(noteTitlePos);
+            String noteText = cursor.getString(noteTextPos);
+            String noteCourseId = cursor.getString(courseIdPos);
+            int id = cursor.getInt(idPos);
+
+            CourseInfo course = dm.getCourse(noteCourseId);
+            NoteInfo note = new NoteInfo(id, course, noteTitle, noteText);
+            dm.mNotes.add(note);
+        }
+        cursor.close();
+    }
+
+    private static void loadCoursesFromDatabase(Cursor cursor) {
+        int courseIdPos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_ID);
+        int courseTitlePos = cursor.getColumnIndex(CourseInfoEntry.COLUMN_COURSE_TITLE);
+
+        DataManager dm = getInstance();
+        dm.mCourses.clear();
+
+        while(cursor.moveToNext()) {
+            String courseId = cursor.getString(courseIdPos);
+            String courseTitle = cursor.getString(courseTitlePos);
+            CourseInfo course = new CourseInfo(courseId, courseTitle, null);
+            dm.mCourses.add(course);
+        }
+        cursor.close();
+
     }
 
     public String getCurrentUserName() {
@@ -35,7 +101,7 @@ public class DataManager {
     }
 
     public int createNewNote() {
-        NoteInfo note = new NoteInfo(null, null, null);
+        NoteInfo note = new NoteInfo(0, null, null, null);
         mNotes.add(note);
         return mNotes.size() - 1;
     }
@@ -94,7 +160,7 @@ public class DataManager {
         mCourses.add(initializeCourse3());
         mCourses.add(initializeCourse4());
     }
-
+/*
     public void initializeExampleNotes() {
         final DataManager dm = getInstance();
 
@@ -137,7 +203,7 @@ public class DataManager {
         mNotes.add(new NoteInfo(course, "Serialization",
                 "Remember to include SerialVersionUID to assure version compatibility"));
     }
-
+*/
     private CourseInfo initializeCourse1() {
         List<ModuleInfo> modules = new ArrayList<>();
         modules.add(new ModuleInfo("android_intents_m01", "Android Late Binding and Intents"));
@@ -203,6 +269,9 @@ public class DataManager {
 
         return index;
     }
+
+
+
     //endregion
 
 }
