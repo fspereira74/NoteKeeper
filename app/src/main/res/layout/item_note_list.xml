@@ -38,11 +38,11 @@
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="0dp"
                 android:text="TextView"
-                android:textAppearance="@android:style/TextAppearance.Material.Large"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textAppearance="@style/CourseTitle"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/imageView7"
-                app:layout_constraintHorizontal_bias="0.0" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/text_title"
